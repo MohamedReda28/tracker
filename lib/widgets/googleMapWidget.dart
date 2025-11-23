@@ -27,6 +27,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   void dispose() {
     googleMapController!.dispose();
     super.dispose();
+
   }
 
   Set<Marker> markers = {};
