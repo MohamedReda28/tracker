@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:mylocationtruckerapp/errors/premission_error.dart';
 import 'package:mylocationtruckerapp/utils/location_servece.dart';
 
 class CustomGoogleMap extends StatefulWidget {
@@ -12,26 +13,24 @@ class CustomGoogleMap extends StatefulWidget {
 
 class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition initialCameraPosition;
- late LocationServece locationServece;
-  GoogleMapController? googleMapController;
+  late LocationServece locationServece;
+  late GoogleMapController googleMapController;
   @override
   void initState() {
+    initialCameraPosition =
+        const CameraPosition(zoom: 17, target: LatLng(0, 0));
 
-    initialCameraPosition = const CameraPosition(
-        zoom: 17, target: LatLng(0,0));
-
-    locationServece =LocationServece();
-    getLocationAndPermission();
+    locationServece = LocationServece();
   }
+
   @override
   void dispose() {
-    googleMapController!.dispose();
+    googleMapController.dispose();
     super.dispose();
-
   }
 
   Set<Marker> markers = {};
-  bool isFristCall =true;
+  bool isFristCall = true;
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +39,25 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         GoogleMap(
             onMapCreated: (controller) {
               googleMapController = controller;
+              updateCrruntLocation();
             },
             initialCameraPosition: initialCameraPosition),
       ],
     );
   }
 
-  void getLocationAndPermission() async {
-    await locationServece.checkAndRequestLocationService();
-    if (await locationServece.checkAndRequestPermissionLocation()) {
-      locationServece.getRealTimeLocationData((locationData) async {
-        setCameraPossion(locationData);
-        await setMaylocationMarker(locationData);
-      });
-    } else {}
+  void updateCrruntLocation() async {
+    try {
+      var locationData = await locationServece.getLocation();
+      setCameraPossion(locationData);
+      await setMaylocationMarker(locationData);
+    } on CheckAndRequestPermissionLocationException catch (e) {
+      // TODO
+    } on CheckAndRequestLocationServiceException catch (e) {
+      // TODO
+    } catch (e) {}
   }
+
   Future<void> setMaylocationMarker(LocationData locationData) async {
     var markerIcon = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(), 'assets/images/location.png');
@@ -74,10 +77,10 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
           target: LatLng(locationData.latitude!, locationData.longitude!),
           zoom: 17);
       googleMapController
-          ?.animateCamera(CameraUpdate.newCameraPosition(newCameraPossion));
-      isFristCall=false;
+          .animateCamera(CameraUpdate.newCameraPosition(newCameraPossion));
+      isFristCall = false;
     } else {
-      googleMapController?.animateCamera(
+      googleMapController.animateCamera(
         CameraUpdate.newLatLng(
           LatLng(locationData.latitude!, locationData.longitude!),
         ),

@@ -1,6 +1,8 @@
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as perm_handler;
 
+import '../errors/premission_error.dart';
+
 class LocationServece {
   Location location = Location();
 
@@ -15,7 +17,8 @@ class LocationServece {
       // 3. التحقق مما إذا نجح التفعيل أم لا
       if (!isServiceEnabled) {
         await perm_handler.openAppSettings();
-        throw CheckAndRequestLocationServiceException();
+        throw CheckAndRequestLocationServiceException(
+            message: 'you have to oppen location to used');
       }
     }
 
@@ -37,12 +40,14 @@ class LocationServece {
         // إذًا تم منح الإذن
       } else if (permissionStatus == PermissionStatus.denied) {
         // تم الرفض مرة أخرى (وليس للأبد)، يمكننا عرض رسالة بسيطة
-        throw CheckAndRequestPermissionLocationException();
+        throw CheckAndRequestPermissionLocationException(
+            message: 'you have to given Permission');
       } else if (permissionStatus == PermissionStatus.deniedForever) {
         // تم الرفض للأبد، نعرض رسالة ونوجه لصفحة الإعدادات
         // نفتح إعدادات التطبيق مباشرة
         await perm_handler.openAppSettings();
-        throw CheckAndRequestPermissionLocationException();
+        throw CheckAndRequestPermissionLocationException(
+            message: 'you have to given Permission');
         // لأن الإذن لم يُمنح
       }
     } else if (permissionStatus == PermissionStatus.granted) {
@@ -50,7 +55,7 @@ class LocationServece {
     } else if (permissionStatus == PermissionStatus.deniedForever) {
       // الحالة التي تم فيها الرفض للأبد من قبل (ولم يتم طلب الإذن الآن)
       await perm_handler.openAppSettings();
-      throw CheckAndRequestPermissionLocationException();
+      throw CheckAndRequestPermissionLocationException(message: '');
     }
   }
 
@@ -73,7 +78,3 @@ class LocationServece {
     return await location.getLocation();
   }
 }
-
-class CheckAndRequestLocationServiceException implements Exception {}
-
-class CheckAndRequestPermissionLocationException implements Exception {}
