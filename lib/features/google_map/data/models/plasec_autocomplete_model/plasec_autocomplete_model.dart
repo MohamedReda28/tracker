@@ -1,4 +1,5 @@
-import 'matched_substring.dart';
+import 'package:mylocationtruckerapp/features/google_map/data/models/plasec_autocomplete_model/matched_substring.dart';
+
 import 'structured_formatting.dart';
 import 'term.dart';
 

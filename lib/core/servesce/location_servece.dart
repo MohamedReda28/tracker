@@ -4,7 +4,9 @@ import 'package:permission_handler/permission_handler.dart' as perm_handler;
 import '../errors/premission_error.dart';
 
 class LocationServece {
-  Location location = Location();
+  final Location location;
+
+  LocationServece({required this.location});
 
   Future<void> checkAndRequestLocationService() async {
     // 1. التحقق مما إذا كانت خدمة الموقع مفعّلة
@@ -55,7 +57,7 @@ class LocationServece {
     } else if (permissionStatus == PermissionStatus.deniedForever) {
       // الحالة التي تم فيها الرفض للأبد من قبل (ولم يتم طلب الإذن الآن)
       await perm_handler.openAppSettings();
-      throw CheckAndRequestPermissionLocationException(message: '');
+      throw CheckAndRequestPermissionLocationException(message: 'open permission');
     }
   }
 
