@@ -1,16 +1,27 @@
-class Term {
-  int? offset;
-  String? value;
+// term_model.dart
+import '../../../domin/entites/tearm_entity.dart';
 
-  Term({this.offset, this.value});
+class TermModel {
+  final int offset;
+  final String value;
 
-  factory Term.fromJson(Map<String, dynamic> json) => Term(
-        offset: json['offset'] as int?,
-        value: json['value'] as String?,
-      );
+  TermModel({
+    required this.offset,
+    required this.value,
+  });
+
+  factory TermModel.fromJson(Map<String, dynamic> json) {
+    return TermModel(
+      offset: json['offset'] ?? 0,
+      value: json['value'] ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        'offset': offset,
-        'value': value,
-      };
+    'offset': offset,
+    'value': value,
+  };
+
+  TermEntity toEntity() =>
+      TermEntity(offset: offset, value: value);
 }

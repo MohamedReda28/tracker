@@ -1,18 +1,27 @@
-class MatchedSubstring {
-  int? length;
-  int? offset;
+// matched_substring_model.dart
+import '../../../domin/entites/matched_substring_entity.dart';
 
-  MatchedSubstring({this.length, this.offset});
+class MatchedSubstringModel {
+  final int length;
+  final int offset;
 
-  factory MatchedSubstring.fromJson(Map<String, dynamic> json) {
-    return MatchedSubstring(
-      length: json['length'] as int?,
-      offset: json['offset'] as int?,
+  MatchedSubstringModel({
+    required this.length,
+    required this.offset,
+  });
+
+  factory MatchedSubstringModel.fromJson(Map<String, dynamic> json) {
+    return MatchedSubstringModel(
+      length: json['length'] ?? 0,
+      offset: json['offset'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'length': length,
-        'offset': offset,
-      };
+    'length': length,
+    'offset': offset,
+  };
+
+  MatchedSubstringEntity toEntity() =>
+      MatchedSubstringEntity(length: length, offset: offset);
 }
